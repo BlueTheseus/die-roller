@@ -1,93 +1,105 @@
 /* TODO:
- * 	* number processing can't handle trailing zeros (10, 20, 200)
+ * - proper error handling
+ * - help & version flags
+ * - flag to print labels (DICEdSIDES: ...)
+ * - flag to print rolls in an orderly table
+ * - accept from stdin
+ * - print to stdout
+ * - print error to stderr
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <string.h>
 #include <stdbool.h>
 
 
-int flip_num(int number)
+#define VERSION "0.2.1"
+
+
+void help(char *program_name)
 {
-	int flipped = 0;
-	int sig_figs = 0;
-	int num = number;
-	int digit = 0;
+	printf("usage: %s [SIDES]\n       %s [DICE]d[SIDES]\n", program_name, program_name);
+	return;
+}
 
-	/* get amount of significant digits */
-	for (int i = number; i != 0; i = i/10)
+int get_substring(char *string, int num_chars, char *substring)
+{
+	if (num_chars < 1) return -1;
+
+	for (int i = 0; i <= num_chars; i++)
 	{
-		sig_figs++;
+		substring[i] = string[i];
 	}
+	substring[num_chars] = '\0';
 
-	/* flip */
-	for (int s = sig_figs; s > 0; s--)
-	{
-		digit = num - ((num/10)*10);
-
-		int magnitude = 1;
-		for (int i = 1; i < s; i++)
-		{
-			magnitude = magnitude * 10;
-		}
-
-		flipped += digit * magnitude;
-
-		num = num/10;
-	}
-
-	return flipped;
+	return 0;
 }
 
 
 int main(int argc, char** argv)
 {
-	srand(time(NULL)); /* initiate random number generator once at very beginning */
+	if (argc == 1)
+	{
+		help(argv[0]);
+		exit(0);
+	}
+
+	srand(time(NULL)); // initiate random number generator once at very beginning
 
 	for(int a = 1; a < argc; a++)
 	{
-		if(argv[a] == NULL) exit(1); /* can't be empty for now */
+		if(argv[a] == NULL)
+		{
+			help(argv[0]);
+			exit(1);
+		}
 
-		char *input = argv[a];
-		int min = 1; /* 0 is not an acceptable roll */
+		int min = 1; // 0 is not an acceptable roll
 		int dice = 1;
 		int sides = 20;
 
-		char current_char = argv[a][0];
-		bool did_see_d = false;
-		int magnitude = 1;
-		int num = 0;
+		char *first_char = &argv[a][0];
+		char *current_char = first_char;
+		int num_char = 0;
+		int saw_d = 0;
 
-		for (int i = 1; current_char != '\0'; i++) /**/
+		for (int i = 1; *current_char != '\0'; i++)
 		{
-			if ((current_char - '0') <= 9)
+			if ((*current_char - '0') <= 9)
 			{
-				num += (current_char-'0')*magnitude;
-				magnitude = magnitude * 10;
+				num_char++;
 			}
-			else if (current_char == 'd')
+			else if (*current_char == 'd')
 			{
-				if (did_see_d) /* can't have multiple 'd' in input */
+				if (saw_d)
 				{
-					printf("error\n");
+					printf("error: input too many 'd'\n");
 				} else {
-					did_see_d = true;
-					if (num > 0)
+					saw_d = 1;
+					if (num_char > 0)
 					{
-						dice = flip_num(num);
+						char number[num_char+1];
+						if (get_substring(first_char, num_char, number) == -1)
+							exit(1);
+
+						dice = atoi(number);
 					} else {
 						dice = 1;
 					}
-					num = 0;
+					num_char = 0;
+					first_char = &argv[a][i];
 				}
-			} else { /* no negatives, floats, or random letters */
-				printf("error (input)\n");
 			}
-			current_char = argv[a][i];
+			else
+			{ /* no negatives, floats, or random letters */
+				printf("error: input invalid character\n");
+			}
+			current_char = &argv[a][i];
 		}
 
-		sides = flip_num(num);
+		char number[num_char+1];
+		get_substring(first_char, num_char, number);
+		sides = atoi(number);
 
 		/* roll for each die */
 		printf("%dd%d: %d", dice, sides, (rand() % sides) + min);
