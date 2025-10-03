@@ -13,7 +13,7 @@
 #include <stdbool.h>
 
 
-#define VERSION "0.2.1"
+#define VERSION "0.2.2"
 
 
 void help(char *program_name)
@@ -102,10 +102,10 @@ int main(int argc, char** argv)
 		sides = atoi(number);
 
 		/* roll for each die */
-		printf("%dd%d: %d", dice, sides, (rand() % sides) + min);
+		printf("%dd%d:\t%d", dice, sides, (rand() % sides) + min);
 		for (int d = 1; d < dice; d++)
 		{
-			printf(", %d", (rand() % sides) + min);
+			printf("\t%d", (rand() % sides) + min);
 		}
 		printf("\n");
 	}
