@@ -1,12 +1,3 @@
-/* TODO:
- * - proper error handling
- * - help & version flags
- * - flag to print labels (DICEdSIDES: ...)
- * - flag to print rolls in an orderly table
- * - accept from stdin
- * - print to stdout
- * - print error to stderr
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -22,9 +13,10 @@ void help(char *program_name)
 	return;
 }
 
+
 int get_substring(char *string, int num_chars, char *substring)
 {
-	if (num_chars < 1) return -1;
+	if (num_chars < 1) return 0;
 
 	for (int i = 0; i <= num_chars; i++)
 	{
@@ -32,7 +24,7 @@ int get_substring(char *string, int num_chars, char *substring)
 	}
 	substring[num_chars] = '\0';
 
-	return 0;
+	return 1;
 }
 
 
@@ -79,10 +71,12 @@ int main(int argc, char** argv)
 					if (num_char > 0)
 					{
 						char number[num_char+1];
-						if (get_substring(first_char, num_char, number) == -1)
+						if (!get_substring(first_char, num_char, number))
 							exit(1);
 
 						dice = atoi(number);
+
+						if (dice == 0) dice = 1;
 					} else {
 						dice = 1;
 					}
@@ -100,6 +94,10 @@ int main(int argc, char** argv)
 		char number[num_char+1];
 		get_substring(first_char, num_char, number);
 		sides = atoi(number);
+		if (sides == 0)
+		{
+			printf("error\n");
+		}
 
 		/* roll for each die */
 		printf("%dd%d:\t%d", dice, sides, (rand() % sides) + min);
