@@ -4,12 +4,19 @@
 #include <stdbool.h>
 
 
-#define VERSION "0.3.1"
+#define PROGRAM_NAME "die-roller"
+#define VERSION "0.4.1"
 
 
-void help(char *program_name)
+void help()
 {
-	fprintf(stdout, "usage: %s [SIDES]\n       %s [DICE]d[SIDES]\n", program_name, program_name);
+	fprintf(stdout, \
+			"usage:\
+			\n\t%s [OPTIONS] [SIDES]\
+			\n\t%s [OPTIONS] [DICE]d[SIDES]\
+			\n\noptions:\
+			\n\t-v\tversion\
+			\n\t-h\tdisplay this help\n", PROGRAM_NAME, PROGRAM_NAME);
 	return;
 }
 
@@ -32,7 +39,7 @@ int main(int argc, char** argv)
 {
 	if (argc == 1)
 	{
-		help(argv[0]);
+		help();
 		exit(0);
 	}
 
@@ -42,8 +49,27 @@ int main(int argc, char** argv)
 	{
 		if(argv[a] == NULL)
 		{
-			help(argv[0]);
+			help();
 			exit(1);
+		}
+
+		// Set Flags
+		if (argv[a][0] == '-')
+		{
+			switch (argv[a][1])
+			{
+				case 'h':
+					help();
+					break;
+
+				case 'v':
+					fprintf(stdout, "%s %s\n", PROGRAM_NAME, VERSION);
+					break;
+
+				default:
+					fprintf(stderr, "Flag '-%s' not supported\n", &argv[a][1]);
+			}
+			continue;
 		}
 
 		int min = 1; // 0 is not an acceptable roll
@@ -134,4 +160,6 @@ int main(int argc, char** argv)
 		}
 		fprintf(stdout, "\n");
 	}
+
+	exit(0);
 }

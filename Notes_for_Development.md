@@ -7,8 +7,6 @@ N/A
 - Implement error-handling for all functions which provide it.
 - Accept arguments from `stdin`.
 - Option-handling
-    - help
-    - version
     - label
     - table
         - Option to state how many columns wide to print the result table.

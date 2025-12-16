@@ -6,7 +6,13 @@ This is a small terminal program for rolling digital dice.
 
 # Use
 ```
-die-roller [OPTIONS]... [NUM_DICE]d[NUM_SIDES]...
+usage:
+    die-roller [OPTIONS] [NUM_SIDES]
+    die-roller [OPTIONS] [NUM_DICE]d[NUM_SIDES]
+
+options:
+    -v  version
+    -h  display this help
 ```
 
 You can provide the dice to roll using a few simple methods:
