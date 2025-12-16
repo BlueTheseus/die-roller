@@ -1,7 +1,7 @@
 Versioning is based on `[STABLE].[FEATURE].[BUG FIX]`
 
 # Bugs
-- Crashes with input `1dd20`
+N/A
 
 # To Do
 - Implement error-handling for all functions which provide it.

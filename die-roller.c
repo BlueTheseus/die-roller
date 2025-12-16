@@ -51,23 +51,23 @@ int main(int argc, char** argv)
 		int sides = 20;
 
 		char *first_char = &argv[a][0];
-		char *current_char = first_char;
+		char current_char[2] = { argv[a][0], '\0' };
 		int num_char = 0;
-		int saw_d = 0;
+		int processed_amount_of_die = 0;
 
 		for (int i = 1; *current_char != '\0'; i++)
 		{
-			if ((*current_char - '0') <= 9)
+			if ( (*current_char - '0') <= 9 ) // Character is a digit
 			{
 				num_char++;
 			}
-			else if (*current_char == 'd')
+			else if (*current_char == 'd') // Character is a 'd'
 			{
-				if (saw_d)
+				if (processed_amount_of_die)
 				{
 					fprintf(stderr, "error: input too many 'd'\n");
+					break;
 				} else {
-					saw_d = 1;
 					if (num_char > 0)
 					{
 						char number[num_char+1];
@@ -81,22 +81,49 @@ int main(int argc, char** argv)
 						dice = 1;
 					}
 					num_char = 0;
-					first_char = &argv[a][i];
+
+					// Check all subsequent characters
+					for (int j = i; argv[a][j] != '\0'; j++)
+					{
+						if ( (argv[a][j] - '0') <= 9 ) // Next character is a digit
+						{
+							first_char = &argv[a][j];
+							i = j;
+							break;
+						}
+						else if (argv[a][j] == 'd') // Next character is another 'd'
+						{
+							continue;
+						}
+						else // Next character is invalid
+						{
+							fprintf(stderr, "error: invalid character '%s'\n", &argv[a][j]);
+						}
+					}
+					processed_amount_of_die = 1;
 				}
 			}
-			else
+			else // Character is invalid
 			{ /* no negatives, floats, or random letters */
-				fprintf(stderr, "error: input invalid character\n");
+				fprintf(stderr, "error: input invalid character '%s'\n", current_char);
 			}
-			current_char = &argv[a][i];
+			current_char[0] = argv[a][i];
 		}
 
-		char number[num_char+1];
-		get_substring(first_char, num_char, number);
-		sides = atoi(number);
+		if (*first_char == '\0')
+		{
+			fprintf(stderr, "error: didn't provide amount of sides\n");
+		}
+		else
+		{
+			char number[num_char+1];
+			get_substring(first_char, num_char, number);
+			sides = atoi(number);
+		}
+
 		if (sides == 0)
 		{
-			fprintf(stderr, "error\n");
+			fprintf(stderr, "error: number of sides cannot be zero\n");
 		}
 
 		/* roll for each die */
