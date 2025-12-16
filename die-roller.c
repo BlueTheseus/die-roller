@@ -4,12 +4,12 @@
 #include <stdbool.h>
 
 
-#define VERSION "0.2.2"
+#define VERSION "0.3.0"
 
 
 void help(char *program_name)
 {
-	printf("usage: %s [SIDES]\n       %s [DICE]d[SIDES]\n", program_name, program_name);
+	fprintf(stdout, "usage: %s [SIDES]\n       %s [DICE]d[SIDES]\n", program_name, program_name);
 	return;
 }
 
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 			{
 				if (saw_d)
 				{
-					printf("error: input too many 'd'\n");
+					fprintf(stderr, "error: input too many 'd'\n");
 				} else {
 					saw_d = 1;
 					if (num_char > 0)
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 			}
 			else
 			{ /* no negatives, floats, or random letters */
-				printf("error: input invalid character\n");
+				fprintf(stderr, "error: input invalid character\n");
 			}
 			current_char = &argv[a][i];
 		}
@@ -96,15 +96,15 @@ int main(int argc, char** argv)
 		sides = atoi(number);
 		if (sides == 0)
 		{
-			printf("error\n");
+			fprintf(stderr, "error\n");
 		}
 
 		/* roll for each die */
-		printf("%dd%d:\t%d", dice, sides, (rand() % sides) + min);
+		fprintf(stdout, "%dd%d:\t%d", dice, sides, (rand() % sides) + min);
 		for (int d = 1; d < dice; d++)
 		{
-			printf("\t%d", (rand() % sides) + min);
+			fprintf(stdout, "\t%d", (rand() % sides) + min);
 		}
-		printf("\n");
+		fprintf(stdout, "\n");
 	}
 }

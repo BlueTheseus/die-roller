@@ -5,8 +5,6 @@ Versioning is based on `[STABLE].[FEATURE].[BUG FIX]`
 
 # To Do
 - Implement error-handling for all functions which provide it.
-- Print errors to `stderr`.
-    - Be sure to print regular rolls to `stdout`.
 - Accept arguments from `stdin`.
 - Option-handling
     - help
